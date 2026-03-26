@@ -1,0 +1,15 @@
+ @import "tailwindcss";
+
+ :root {
+   --text: #08060d;
+   --text-dark: #f3f4f6;
+ }
+
+ body {
+   /* font: 13px/145% Georgia, 'Times New Roman', Times, serif; */
+   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+ }
+
+ h1 {
+   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+ }

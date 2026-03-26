@@ -4,7 +4,7 @@ Practice project using React. A clone of a popular word game.
 
 ## Preview
 
-![Screenshot of the Wordle Clone website.](/assets/meta_images/preview_light.png)
+![Screenshot of the Wordle Clone website.](/src/assets/meta_images/preview_light.png)
 
 ## Link
 

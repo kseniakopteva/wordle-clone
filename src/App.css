@@ -7,9 +7,3 @@
     opacity: 1;
   }
 }
-
-.animate-fadeIn {
-  animation: fadeIn 0s forwards;
-  visibility: visible;
-  /* important to override invisible */
-}

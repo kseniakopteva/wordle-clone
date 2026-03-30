@@ -60,14 +60,15 @@ function App() {
       .toUpperCase()
       .split(""),
   );
-  const [currentAttemptID, setCurrentAttemptID] = useState(1);
+
+  const [currentAttemptID, setCurrentAttemptID] = useState(0);
   const [attempts, setAttempts] = useState([
+    { id: 0, word: [] },
     { id: 1, word: [] },
     { id: 2, word: [] },
     { id: 3, word: [] },
     { id: 4, word: [] },
     { id: 5, word: [] },
-    { id: 6, word: [] },
   ]);
   const [isGameOver, setIsGameOver] = useState(false);
 
@@ -89,10 +90,48 @@ function App() {
       return;
     }
 
+    const newWordArr = [...newWord.toUpperCase()];
+
+    let attCopy = [];
+    newWordArr.forEach((element, index) => {
+      attCopy.push({ index: index, letter: element });
+    });
+    let solCopy = [];
+    currentSolution.forEach((element, index) => {
+      solCopy.push({ index: index, letter: element });
+    });
+    let final = [];
+
+    attCopy.forEach(({ letter, index }) => {
+      if (letter === solCopy.find((elem) => elem.index === index).letter) {
+        final.push({ index, letter, color: "green" });
+
+        solCopy = solCopy.filter((elem) => elem.index !== index);
+        attCopy = attCopy.filter((elem) => elem.index !== index);
+      }
+    });
+    attCopy.forEach(({ letter, index }) => {
+      let found = solCopy.find((elem) => elem.letter === letter);
+      if (found != undefined) {
+        final.push({ index, letter, color: "yellow" });
+
+        solCopy = solCopy.filter((elem) => elem.index !== found.index);
+        attCopy = attCopy.filter((elem) => elem.index !== index);
+      }
+    });
+    attCopy.forEach(({ letter, index }) => {
+      final.push({ index, letter, color: "grey" });
+
+      solCopy = solCopy.filter((elem) => elem.index !== index);
+      attCopy = attCopy.filter((elem) => elem.index !== index);
+    });
+
+    final = final.sort((a, b) => a.index - b.index);
+
     setAttempts(
       attempts.map((item) => {
         if (item.id === currentAttemptID) {
-          return { ...item, word: [...newWord.toUpperCase()] };
+          return { ...item, word: final };
         } else {
           return item;
         }
@@ -100,8 +139,6 @@ function App() {
     );
 
     setCurrentAttemptID((curr) => curr + 1);
-
-    console.log(attempts, currentAttemptID);
 
     if (
       currentAttemptID >= 6 ||
@@ -116,11 +153,11 @@ function App() {
   }
 
   return (
-    <div className="h-full bg-[url(https://images.unsplash.com/photo-1619252584172-a83a949b6efd?q=80&w=1674&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)] bg-cover py-20 dark:bg-[url(https://images.unsplash.com/photo-1716143493321-27589d64308b?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)]">
-      <div className="m-auto h-full w-125 rounded-lg border border-white bg-[rgba(255,255,255,0.6)] p-10 shadow-lg backdrop-blur-sm dark:border-black dark:bg-[rgba(0,0,0,0.6)] dark:shadow-2xl">
+    <div className="darkl:bg-[url(https://images.unsplash.com/photo-1716143493321-27589d64308b?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)] h-full bg-[url(https://images.unsplash.com/photo-1619252584172-a83a949b6efd?q=80&w=1674&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)] bg-cover py-20">
+      <div className="darkl:border-black darkl:bg-[rgba(0,0,0,0.6)] darkl:shadow-2xl m-auto h-full w-125 rounded-lg border border-white bg-[rgba(255,255,255,0.6)] p-10 shadow-lg backdrop-blur-sm">
         <main className="flex h-full grow flex-col items-center">
           <header>
-            <h1 className="text-5xl text-(--text) dark:text-(--text-dark)">
+            <h1 className="darkl:text-(--text-dark) text-5xl text-(--text)">
               Wordle Clone
             </h1>
           </header>
@@ -128,15 +165,45 @@ function App() {
             {attempts.map((row) => (
               <div className="flex gap-1.5">
                 {row.word === undefined || row.word.length != 0
-                  ? row.word.map((letter, index) => (
-                      <div
-                        className={`animate-fadeIn invisible flex min-h-13 min-w-13 items-center justify-center rounded-sm border text-4xl opacity-0 shadow transition-colors duration-500 delay-${index * 200} ${letter === currentSolution[index] ? "border-[#8a9f4f] bg-[#aac562] text-[#375812]" : currentSolution.includes(letter) ? "border-[#d4b43f] bg-[#ffe070] text-[#814e06]" : "border-gray-400 bg-gray-200 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white"}`}
-                      >
-                        <p>{letter}</p>
-                      </div>
-                    ))
+                  ? row.word.map((letter, index) => {
+                      let boxColor =
+                        "border-gray-400 bg-gray-200 darkl:border-zinc-600 darkl:bg-zinc-700 ";
+                      let textColor = "darkl:text-white";
+
+                      if (letter.color === "yellow") {
+                        boxColor = "border-[#d4b43f] bg-[#ffe070]";
+                        textColor = "text-[#814e06]";
+                      } else if (letter.color === "green") {
+                        boxColor = "border-[#8a9f4f] bg-[#aac562]";
+                        textColor = "text-[#375812]";
+                      }
+
+                      return (
+                        <div className="darkl:border-[#2e303a] relative flex min-h-13 min-w-13 items-center justify-center rounded-sm border border-gray-400 text-[2rem] shadow">
+                          <div
+                            style={{
+                              opacity: 0,
+                              animation: "fadeIn 0.4s forwards",
+                              animationDelay: `${index * 100}ms`,
+                            }}
+                            className={`absolute -inset-px rounded-sm ${boxColor} border`}
+                          />
+
+                          <p
+                            style={{
+                              opacity: 0,
+                              animation: "fadeIn 0.3s forwards",
+                              animationDelay: `${index * 100}ms`,
+                            }}
+                            className={`relative z-10 ${textColor} `}
+                          >
+                            {letter.letter}
+                          </p>
+                        </div>
+                      );
+                    })
                   : [...Array(5)].map(() => (
-                      <div className="flex min-h-13 min-w-13 items-center justify-center rounded-sm border border-gray-400 text-[2rem] shadow dark:border-[#2e303a]"></div>
+                      <div className="darkl:border-[#2e303a] flex min-h-13 min-w-13 items-center justify-center rounded-sm border border-gray-400 text-[2rem] shadow"></div>
                     ))}
               </div>
             ))}
@@ -151,26 +218,30 @@ function App() {
                 type="text"
                 name="word"
                 disabled={isGameOver}
-                className="w-50 rounded-xs border border-gray-500 bg-white px-4 py-2 text-2xl text-(--text) uppercase shadow disabled:border-gray-400 disabled:bg-gray-200 dark:border-zinc-500 dark:bg-zinc-950 dark:text-white dark:disabled:border-zinc-700 dark:disabled:bg-zinc-800"
+                className="darkl:border-zinc-500 darkl:bg-zinc-950 darkl:text-white darkl:disabled:border-zinc-700 darkl:disabled:bg-zinc-800 w-50 rounded-xs border border-gray-500 bg-white px-4 py-2 text-2xl text-(--text) uppercase shadow disabled:border-gray-400 disabled:bg-gray-200"
               />
               <button
                 type="submit"
                 disabled={isGameOver}
-                className="cursor-pointer rounded border border-gray-600 bg-gray-600 p-2 text-white disabled:cursor-not-allowed disabled:border-gray-400 disabled:bg-gray-400 dark:border-zinc-700 dark:bg-zinc-700 dark:disabled:border-zinc-800 dark:disabled:bg-zinc-900"
+                className="darkl:border-zinc-700 darkl:bg-zinc-700 darkl:disabled:border-zinc-800 darkl:disabled:bg-zinc-900 cursor-pointer rounded border border-gray-600 bg-gray-600 p-2 text-white disabled:cursor-not-allowed disabled:border-gray-400 disabled:bg-gray-400"
               >
                 Submit
               </button>
             </form>
             {isGameOver && (
               <>
-                {currentAttemptID >= 7 ? (
+                {currentAttemptID >= 6 &&
+                attempts
+                  .find((elem) => elem.id === 5)
+                  .word.map((elem) => elem.letter)
+                  .join("") != currentSolution.join("") ? (
                   <p className="my-3 w-full text-center">
                     No more attempts left!
                   </p>
                 ) : (
                   <p className="my-3 w-full text-center">You won!</p>
                 )}
-                <p className="my-3 w-full text-center text-2xl text-black dark:text-white">
+                <p className="darkl:text-white my-3 w-full text-center text-2xl text-black">
                   The solution is:{" "}
                   <span className="inline-block rounded-lg border-[#8a9f4f] bg-[#aac562] px-2 py-1 text-[#375812]">
                     {currentSolution.join("")}
@@ -179,7 +250,7 @@ function App() {
               </>
             )}
             <button
-              className="mt-auto flex cursor-pointer items-center justify-center gap-1 rounded border border-gray-300 bg-gray-200 p-2 text-xl dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
+              className="darkl:border-zinc-700 darkl:bg-zinc-800 darkl:text-white mt-auto flex cursor-pointer items-center justify-center gap-1 rounded border border-gray-300 bg-gray-200 p-2 text-xl text-zinc-800"
               onClick={() => {
                 setCurrentAttemptID(1);
                 setAttempts([
@@ -205,11 +276,11 @@ function App() {
                 width="25"
                 height="25"
                 fill="currentColor"
-                class="bi bi-arrow-clockwise"
+                className="bi bi-arrow-clockwise"
                 viewBox="0 0 16 16"
               >
                 <path
-                  fill-rule="evenodd"
+                  fillRule="evenodd"
                   d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"
                 />
                 <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466" />
@@ -219,26 +290,26 @@ function App() {
           </section>
 
           <div>
-            <p className="peer absolute top-3 right-3 rounded bg-gray-200 p-1 dark:bg-zinc-800">
+            <p className="peer darkl:bg-zinc-800 absolute top-3 right-3 rounded bg-gray-200 p-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
                 fill="currentColor"
-                class="bi bi-bar-chart-fill"
+                className="bi bi-bar-chart-fill"
                 viewBox="0 0 16 16"
               >
                 <path d="M1 11a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1zm5-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm5-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1z" />
               </svg>
             </p>
-            <div className="absolute top-5 right-0 z-10 h-0 w-0 border-8 border-gray-200 border-t-transparent border-b-transparent border-l-transparent opacity-0 transition-all duration-300 peer-hover:opacity-100 dark:border-zinc-700 dark:border-t-transparent dark:border-b-transparent dark:border-l-transparent"></div>
-            <div className="absolute -top-2 -right-60 w-60 rounded bg-gray-200 p-3 text-black opacity-0 shadow transition-all duration-300 peer-hover:opacity-100 dark:bg-zinc-700 dark:text-white">
+            <div className="darkl:border-zinc-700 darkl:border-t-transparent darkl:border-b-transparent darkl:border-l-transparent absolute top-5 right-0 z-10 h-0 w-0 border-8 border-gray-200 border-t-transparent border-b-transparent border-l-transparent opacity-0 transition-all duration-300 peer-hover:opacity-100"></div>
+            <div className="darkl:bg-zinc-700 darkl:text-white absolute -top-2 -right-60 w-60 rounded bg-gray-200 p-3 text-black opacity-0 shadow transition-all duration-300 peer-hover:opacity-100">
               You have won {wonGameCount} out of {playedGameCount} games played.
             </div>
           </div>
 
           <div>
-            <p className="peer absolute top-13 right-3 rounded bg-gray-200 p-1 dark:bg-zinc-800">
+            <p className="peer darkl:bg-zinc-800 absolute top-13 right-3 rounded bg-gray-200 p-1">
               <a href="https://en.wikipedia.org/wiki/Wordle#Gameplay">
                 {" "}
                 <svg
@@ -246,7 +317,7 @@ function App() {
                   width="24"
                   height="24"
                   fill="currentColor"
-                  class="bi bi-info-circle"
+                  className="bi bi-info-circle"
                   viewBox="0 0 16 16"
                 >
                   <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
@@ -254,8 +325,8 @@ function App() {
                 </svg>
               </a>
             </p>
-            <div className="absolute top-15 right-0 z-10 h-0 w-0 border-8 border-gray-200 border-t-transparent border-b-transparent border-l-transparent opacity-0 transition-all duration-300 peer-hover:opacity-100 dark:border-zinc-700 dark:border-t-transparent dark:border-b-transparent dark:border-l-transparent"></div>
-            <div className="absolute top-11 -right-50 w-50 rounded bg-gray-200 p-3 text-black opacity-0 shadow transition-all duration-300 peer-hover:opacity-100 dark:bg-zinc-700 dark:text-white">
+            <div className="darkl:border-zinc-700 darkl:border-t-transparent darkl:border-b-transparent darkl:border-l-transparent absolute top-15 right-0 z-10 h-0 w-0 border-8 border-gray-200 border-t-transparent border-b-transparent border-l-transparent opacity-0 transition-all duration-300 peer-hover:opacity-100"></div>
+            <div className="darkl:bg-zinc-700 darkl:text-white absolute top-11 -right-50 w-50 rounded bg-gray-200 p-3 text-black opacity-0 shadow transition-all duration-300 peer-hover:opacity-100">
               Click for the game rules!{" "}
               <span className="text-sm">(Wikipedia article)</span>
             </div>

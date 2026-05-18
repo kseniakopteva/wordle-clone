@@ -14,8 +14,13 @@ export default function Input({
 }) {
   const [currentSolution] = useContext(SolutionContext);
 
-  function handleSubmit(formData) {
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
     const wordInput = formData.get("word");
+
+    e.target.reset();
 
     if (wordInput.length < 5 || wordInput.length > 5) {
       alert("The word should be 5 letters long.");
@@ -62,7 +67,7 @@ export default function Input({
   }
 
   return (
-    <form action={handleSubmit} className="flex w-full items-stretch gap-2">
+    <form onSubmit={handleSubmit} className="flex w-full items-stretch gap-2">
       <input
         type="text"
         name="word"

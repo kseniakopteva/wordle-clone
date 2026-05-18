@@ -7,7 +7,7 @@ export default function StatsPopup({
   gameStats,
 }) {
   return (
-    <div>
+    <>
       <button
         onClick={() => {
           areStatsOpen ? setAreStatsOpen(false) : setAreStatsOpen(true);
@@ -25,6 +25,6 @@ export default function StatsPopup({
       >
         You have won {gameStats.won} out of {gameStats.played} games played.
       </div>
-    </div>
+    </>
   );
 }

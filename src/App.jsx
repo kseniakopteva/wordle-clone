@@ -28,8 +28,6 @@ function App() {
   const [areStatsOpen, setAreStatsOpen] = useState(false);
   const [isLinkOpen, setIsLinkOpen] = useState(false);
 
-  console.log(attempts);
-
   return (
     <SolutionContext value={solutionHook}>
       <GamePanel>
@@ -39,7 +37,7 @@ function App() {
         <GameFooter
           attempts={attempts}
           setAttempts={setAttempts}
-
+          emptyAttempts={emptyAttempts}
           gameStats={gameStats}
           setGameStats={setGameStats}
         />

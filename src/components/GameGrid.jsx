@@ -1,13 +1,12 @@
 export default function GameGrid({ attempts }) {
-  console.log(attempts);
   return (
-    <div className="my-10 flex flex-col gap-1.5 text-(--text)">
-      {attempts.map((row) => {
+    <div className="flex flex-col gap-1.5 text-(--text) 2xl:my-10">
+      {attempts.map((row, index) => {
         let emptyBoxColor =
           "border-gray-400 bg-gray-300 dark:border-zinc-800 dark:bg-neutral-800 ";
 
         return (
-          <div className="flex gap-1.5">
+          <div className="flex gap-1.5" key={index}>
             {row.word === undefined || row.word.length != 0
               ? row.word.map((letter, index) => {
                   let boxColor = "";
@@ -32,7 +31,8 @@ export default function GameGrid({ attempts }) {
 
                   return (
                     <div
-                      className={`relative flex min-h-9 min-w-9 items-center justify-center rounded-sm border text-2xl shadow md:min-h-13 md:min-w-13 md:text-[2rem] ${emptyBoxColor}`}
+                      key={index}
+                      className={`relative flex min-h-9 min-w-9 items-center justify-center rounded-sm border text-2xl shadow md:min-h-11 md:min-w-11 md:text-[1.7rem] 2xl:min-h-13 2xl:min-w-13 2xl:text-[2rem] ${emptyBoxColor}`}
                     >
                       <div
                         style={letterAnimation}
@@ -48,9 +48,10 @@ export default function GameGrid({ attempts }) {
                     </div>
                   );
                 })
-              : [...Array(5)].map(() => (
+              : [...Array(5)].map((elem, index) => (
                   <div
-                    className={`flex min-h-9 min-w-9 items-center justify-center rounded-sm border text-[2rem] shadow md:min-h-13 md:min-w-13 ${emptyBoxColor}`}
+                    key={index}
+                    className={`flex min-h-9 min-w-9 items-center justify-center rounded-sm border shadow md:min-h-11 md:min-w-11 md:text-[1.7rem] 2xl:min-h-13 2xl:min-w-13 2xl:text-[2rem] ${emptyBoxColor}`}
                   ></div>
                 ))}
           </div>

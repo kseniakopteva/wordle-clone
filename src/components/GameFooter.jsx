@@ -8,7 +8,7 @@ export default function GameFooter(props) {
   const [isGameOver, setIsGameOver] = useState(false);
 
   return (
-    <section className="flex h-full flex-col justify-between">
+    <section className="flex flex-col justify-between gap-3">
       <Input
         isGameOver={props.isGameOver}
         setIsGameOver={setIsGameOver}
@@ -21,7 +21,7 @@ export default function GameFooter(props) {
       />
       {isGameOver && (
         <GameOverMessage
-          currentAttemptID={props.currentAttemptID}
+          currentAttemptID={currentAttemptID}
           attempts={props.attempts}
         />
       )}

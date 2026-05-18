@@ -6,7 +6,7 @@ export default function InfoPopup({
   setAreStatsOpen,
 }) {
   return (
-    <div>
+    <>
       <button
         onClick={() => {
           isLinkOpen ? setIsLinkOpen(false) : setIsLinkOpen(true);
@@ -30,6 +30,6 @@ export default function InfoPopup({
           Wikipedia article
         </a>
       </div>
-    </div>
+    </>
   );
 }

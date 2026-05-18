@@ -25,7 +25,7 @@ export default function RepeatGameButton({
 
   return (
     <button
-      className={`mt-5 flex cursor-pointer items-center justify-center gap-1 rounded border border-gray-300 bg-gray-200 p-2 text-xl text-zinc-800 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white ${isGameOver ? "border border-white outline-3 outline-(--accent)" : ""}`}
+      className={`mt-5 flex cursor-pointer items-center justify-center gap-1 rounded border border-gray-300 bg-gray-200 p-1 py-2 text-lg text-zinc-800 2xl:p-2 2xl:text-xl dark:border-zinc-700 dark:bg-zinc-800 dark:text-white ${isGameOver ? "border border-white outline-3 outline-(--accent)" : ""}`}
       onClick={() => resetGame()}
     >
       <RepeatSVG /> Repeat with new word
